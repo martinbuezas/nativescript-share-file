@@ -8,6 +8,7 @@ export class ShareFile {
           let intent = new android.content.Intent();
           let map = android.webkit.MimeTypeMap.getSingleton();
           let mimeType = map.getMimeTypeFromExtension(this.fileExtension(args.path));
+          mimeType = mimeType ? mimeType : "message/rfc822";
 
           intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -18,10 +19,10 @@ export class ShareFile {
           android.os.StrictMode.setVmPolicy(builder.build());
 
           intent.setAction(android.content.Intent.ACTION_SEND_MULTIPLE);
-          intent.setType("message/rfc822");
+          intent.setType(mimeType);
           intent.putParcelableArrayListExtra(android.content.Intent.EXTRA_STREAM, uris);
 
-          application.android.currentContext.startActivity(android.content.Intent.createChooser(intent, args.intentTitle ? args.intentTitle : 'Open file:'));
+          application.android.foregroundActivity.startActivity(android.content.Intent.createChooser(intent, args.intentTitle ? args.intentTitle : 'Open file:'));
 
         }
         catch (e) {
